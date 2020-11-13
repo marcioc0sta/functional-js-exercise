@@ -44,12 +44,5 @@
       "npx prettier --write",
       "eslint **/*.js --fix-dry-run"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm test:all",
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   }
 }
