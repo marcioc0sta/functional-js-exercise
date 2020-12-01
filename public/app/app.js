@@ -1,4 +1,5 @@
 import { notaService as service } from './nota/service.js'
+import { EventEmitter } from './utils/event-emmiter.js'
 import { debounceTime, partialize, pipe, takeUntil } from './utils/operators.js'
 import { retry, timeoutPromise, trace } from './utils/promise-helpers.js'
 import './utils/array-helpers.js'
@@ -9,7 +10,7 @@ const action = operations(() =>
   retry(3, 5000, () => {
     return timeoutPromise(200, service.sumItems('2143'))
   })
-    .then(trace)
+    .then(total => EventEmitter.emit('totalOfItems', total))
     .catch(trace)
 )
 
