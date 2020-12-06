@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trampoline Pattern</title>
+</head>
+<body>
+<script>
+    const trampoline = fn => {
+      while (typeof fn === 'function') {
+        fn = fn()
+      }
+      return fn
+    }
+    const showCountDown = counter => {
+      if(counter < 0) return
+      console.log(counter)
+      return () => showCountDown(--counter)
+    }
+    trampoline(showCountDown(20000))
+
+    const factorial = (acc, n) => {
+      if(n <= 1) return acc
+      return () => factorial(acc * n, --n)
+    }
+
+    console.log(trampoline(factorial(1, 200)))
+</script>
+</body>
+</html>
