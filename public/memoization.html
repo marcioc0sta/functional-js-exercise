@@ -7,30 +7,42 @@
 <body>
 <script>
     const memoizer = fn => {
-      const cache = new Map()
-      return (...args) => {
-        const key = JSON.stringify(args)
-
-        if(cache.has(key)) {
-          console.log(`cached value from: ${args}`)
-          return cache.get(key)
+        const cache = new Map()
+        const newFn = (...args) => {
+            const key = JSON.stringify(args)
+            if(cache.has(key)) {
+              console.log(`cached from ${key}`)
+              return cache.get(key)
+            }
+            console.log(`computed from ${key}`)
+            const result = fn(...args)
+            cache.set(key, result)
+            return result
         }
 
-        console.log(`computed value from: ${args}`)
-        const result = fn(...args)
-        cache.set(key, result)
-
-        return result
-      }
+        newFn.clearCache = () => cache.clear()
+        return newFn
     }
+
     const factorial = memoizer(n => {
-      if(n <= 1) return 1
-      return n * factorial(--n)
+        if(n <= 1) return 1
+        return n * factorial(--n)
     })
 
-    console.log(factorial(5))
-    console.log(factorial(3))
-    console.log(factorial(4))
+    const handleStatus = res =>
+      res.ok ? res.json() : Promise.reject(res.statusText)
+
+    const getNotaFromId = id =>
+      fetch(`http://localhost:3000/notas/${id}`)
+        .then(handleStatus)
+
+    const memoizedGetNotaFromId = memoizer(getNotaFromId)
+    memoizedGetNotaFromId(1)
+      .then(console.log)
+      .then(() => memoizedGetNotaFromId.clearCache())
+      .then(() => memoizedGetNotaFromId(1))
+      .then(console.log)
+      .catch(err => console.log(err))
 
 </script>
 </body>
